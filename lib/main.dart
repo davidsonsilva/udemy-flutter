@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+//import 'package:flutter/rendering.dart';
+
 import './pages/auth.dart';
 import './pages/products_admin.dart';
 import './pages/products.dart';
 import './pages/product.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  //debugPaintSizeEnabled = true;
+  runApp(MyApp());
+}
 
 class MyApp extends StatefulWidget {
   @override
@@ -34,14 +39,16 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
           brightness: Brightness.light,
           primarySwatch: Colors.deepOrange,
-          accentColor: Colors.deepPurple),
+          accentColor: Colors.deepPurple /* ,
+          fontFamily: 'Oswald' */
+          ),
+
       // home: AuthPage(),
       routes: {
-        '/': (BuildContext context) =>
-            AuthPage(),
-        '/products': (BuildContext context) =>
-            ProductsPage(_products),    
-        '/admin': (BuildContext context) => ProductsAdminPage( _addProduct, _deleteProduct),
+        '/': (BuildContext context) => AuthPage(),
+        '/products': (BuildContext context) => ProductsPage(_products),
+        '/admin': (BuildContext context) =>
+            ProductsAdminPage(_addProduct, _deleteProduct),
       },
       onGenerateRoute: (RouteSettings settings) {
         final List<String> pathElements = settings.name.split('/');
@@ -52,15 +59,17 @@ class _MyAppState extends State<MyApp> {
           final int index = int.parse(pathElements[2]);
           return MaterialPageRoute<bool>(
             builder: (BuildContext context) => ProductPage(
-                _products[index]['title'], _products[index]['image']),
+                _products[index]['title'],
+                _products[index]['image'],
+                _products[index]['description'],
+                _products[index]['price'].toString()),
           );
         }
         return null;
       },
       onUnknownRoute: (RouteSettings settings) {
         return MaterialPageRoute(
-            builder: (BuildContext context) =>
-                ProductsPage(_products));
+            builder: (BuildContext context) => ProductsPage(_products));
       },
     );
   }

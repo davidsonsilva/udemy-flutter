@@ -14,21 +14,52 @@ class Products extends StatelessWidget {
         children: <Widget>[
           Image.asset(products[index]['image']),
           Container(
-            margin: EdgeInsets.all(10.0),
-            child: Row(children: <Widget>[
-               Text(
-              products[index]['title'],
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 26.0),
-            ), 
-            Text(products[index]['price'].toString())
-            ],),
-            
+            padding: EdgeInsets.only(top: 10.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  products[index]['title'],
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 26.0,
+                      fontFamily: 'Oswald'),
+                ),
+                SizedBox(
+                  width: 8.0,
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.5),
+                  decoration: BoxDecoration(
+                      color: Theme.of(context).accentColor,
+                      borderRadius: BorderRadius.circular(5.0)),
+                  child: Text(
+                    '\$${products[index]['price'].toString()}',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                )
+              ],
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.5),
+            decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey, width: 1.0),
+                borderRadius: BorderRadius.circular(4.0)),
+            child: Text('Union Square, San Francisco'),
           ),
           ButtonBar(
             alignment: MainAxisAlignment.center,
             children: <Widget>[
-              FlatButton(
-                child: Text('Details'),
+              IconButton(
+                icon:Icon(Icons.info),
+                color: Theme.of(context).accentColor,
+                onPressed: () => Navigator.pushNamed<bool>(
+                    context, '/product/' + index.toString()),
+              ),
+              IconButton(
+                icon:Icon(Icons.favorite_border),
+                color: Colors.red,
                 onPressed: () => Navigator.pushNamed<bool>(
                     context, '/product/' + index.toString()),
               )

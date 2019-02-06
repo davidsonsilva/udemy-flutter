@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 class ProductPage extends StatelessWidget {
-  final String tittle;
-  final String imageUrl;
+  final String _tittle;
+  final String _description;
+  final String _price;
+  final String _imageUrl;
 
-  ProductPage(this.tittle, this.imageUrl);
+  ProductPage(this._tittle, this._imageUrl, this._description, this._price);
 
   _showAlertDialog(BuildContext context) {
     showDialog(
@@ -43,23 +45,77 @@ class ProductPage extends StatelessWidget {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(tittle),
+          title: Text(_tittle),
         ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Image.asset(imageUrl),
+            Image.asset(_imageUrl),
+            Container(
+                padding: EdgeInsets.all(10.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      _tittle,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 26.0,
+                          fontFamily: 'Oswald'),
+                    ),
+                  ],
+                )),
             Container(
               padding: EdgeInsets.all(10.0),
-              child: Text(tittle),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.5),
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey, width: 1.0),
+                        borderRadius: BorderRadius.circular(5.0)),
+                    child: Text(
+                      _description,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 22.0),
+                    ),
+                  ),
+                ],
+              ),
             ),
             Container(
               padding: EdgeInsets.all(10.0),
-              child: RaisedButton(
-                  color: Theme.of(context).accentColor,
-                  child: Text('DELETE'),
-                  onPressed: () => _showAlertDialog(context), //=> Navigator.pop(context, true),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.5),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5.0),
+                      border: Border.all(color: Colors.grey, width: 1.0),
+                    ),
+                    child: Text(
+                      '\$$_price',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20.0,
+                          fontFamily: 'Oswald'),
+                    ),
                   ),
+                ],
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.all(10.0),
+              child: IconButton(
+                color: Colors.red,
+                icon: Icon(Icons.delete),
+                onPressed: () => _showAlertDialog(
+                    context), //=> Navigator.pop(context, true),
+              ),
             ),
           ],
         ),
