@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../product_manager.dart';
+import '../widgets/products/products.dart';
 //import './products_admin.dart';
 
 class ProductsPage extends StatelessWidget {
@@ -8,10 +7,8 @@ class ProductsPage extends StatelessWidget {
   final List<Map<String, dynamic>> products;
   ProductsPage(this.products);
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      drawer: Drawer(
+  Widget _buildSideDrawer(BuildContext context) {
+    return Drawer(
         child: Column(
           children: <Widget>[
             AppBar(
@@ -27,7 +24,13 @@ class ProductsPage extends StatelessWidget {
             )
           ],
         ),
-      ),
+      );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      drawer: _buildSideDrawer(context),
       appBar: AppBar(
         title: Text('EasyList'),
         actions: <Widget>[
@@ -35,7 +38,7 @@ class ProductsPage extends StatelessWidget {
           onPressed: (){},)
         ],
       ),
-      body: ProductManager(products),
+      body: Products(products),
     );
   }
 }
