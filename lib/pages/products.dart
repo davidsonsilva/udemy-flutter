@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import '../widgets/products/products.dart';
+
 //import './products_admin.dart';
 
 class ProductsPage extends StatelessWidget {
-
-  final List<Map<String, dynamic>> products;
-  ProductsPage(this.products);
 
   Widget _buildSideDrawer(BuildContext context) {
     return Drawer(
@@ -38,7 +36,7 @@ class ProductsPage extends StatelessWidget {
           onPressed: (){},)
         ],
       ),
-      body: Products(products),
+      body: Products(),
     );
   }
 }
