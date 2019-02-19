@@ -110,7 +110,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
           onPressed: () => _submitForm(
                 model.addProduct,
                 model.updateProduct,
-                model.selectedProduct,
+                model.selectProduct,
                 model.selectedProductIndex,
               ),
         );
@@ -153,12 +153,12 @@ class _ProductEditPageState extends State<ProductEditPage> {
     return ScopedModelDescendant<MainModel>(
         builder: (BuildContext context, Widget child, MainModel model) {
       return model.selectedProductIndex == null
-          ? _buildPageContent(context, model.selectProduct)
+          ? _buildPageContent(context, model.selectedProduct)
           : Scaffold(
               appBar: AppBar(
                 title: Text('Edit Product'),
               ),
-              body: _buildPageContent(context, model.selectProduct),
+              body: _buildPageContent(context, model.selectedProduct),
             );
     });
   }
