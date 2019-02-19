@@ -14,9 +14,9 @@ class ProductEditPage extends StatefulWidget {
 class _ProductEditPageState extends State<ProductEditPage> {
   final Map<String, dynamic> _formData = {
     'title': null,
-    'description': Null,
-    'image': 'assets/food.jpg',
+    'description': null,
     'price': null,
+    'image': 'assets/food.jpg',
   };
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
   final FocusNode _titleFocusNode = new FocusNode();
@@ -148,18 +148,21 @@ class _ProductEditPageState extends State<ProductEditPage> {
     );
   }
 
-  @override
+@override
   Widget build(BuildContext context) {
     return ScopedModelDescendant<MainModel>(
-        builder: (BuildContext context, Widget child, MainModel model) {
-      return model.selectedProductIndex == null
-          ? _buildPageContent(context, model.selectedProduct)
-          : Scaffold(
-              appBar: AppBar(
-                title: Text('Edit Product'),
-              ),
-              body: _buildPageContent(context, model.selectedProduct),
-            );
-    });
+      builder: (BuildContext context, Widget child, MainModel model) {
+        final Widget pageContent =
+            _buildPageContent(context, model.selectedProduct);
+        return model.selectedProductIndex == null
+            ? pageContent
+            : Scaffold(
+                appBar: AppBar(
+                  title: Text('Edit Product'),
+                ),
+                body: pageContent,
+              );
+      },
+    );
   }
 }

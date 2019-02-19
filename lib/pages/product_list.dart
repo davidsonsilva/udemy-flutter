@@ -10,7 +10,7 @@ class ProductListPage extends StatelessWidget {
     return IconButton(
       icon: Icon(Icons.edit),
       onPressed: () {
-        model.setProductIndex(index);
+        model.selectProduct(index);
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (BuildContext context) {
@@ -18,7 +18,7 @@ class ProductListPage extends StatelessWidget {
             },
           ),
         ).then((_) {
-          model.setProductIndex(null);
+          model.selectProduct(null);
         });
       },
     );
@@ -35,7 +35,7 @@ class ProductListPage extends StatelessWidget {
               direction: DismissDirection.endToStart,
               onDismissed: (DismissDirection direction) {
                 if (direction == DismissDirection.endToStart) {
-                  model.setProductIndex(index);
+                  model.selectProduct(index);
                   model.deleteProduct();
                 }
               },

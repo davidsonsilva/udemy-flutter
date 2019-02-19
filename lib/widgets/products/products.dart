@@ -6,17 +6,19 @@ import '../../scoped-models/main.dart';
 
 class Products extends StatelessWidget {
   Widget _buildProductsList(List<Product> products) {
-    Widget productCard = Center(
+    Widget productCards = Center(
       child: Text('No products found.Please add some!'),
     );
     if (products.length > 0) {
-      productCard = ListView.builder(
+      productCards = ListView.builder(
         itemBuilder: (BuildContext context, int index) =>
             ProductsCard(products[index], index),
         itemCount: products.length,
       );
+    } else {
+      productCards = Container();
     }
-    return productCard;
+    return productCards;
   }
 
   @override
@@ -24,7 +26,7 @@ class Products extends StatelessWidget {
     print('[Products Widget] build');
     return ScopedModelDescendant<MainModel>(
       builder: (BuildContext context, Widget child, MainModel model) {
-        return _buildProductsList(model.displayProducts);
+        return _buildProductsList(model.displayedProducts);
       },
     );
   }
