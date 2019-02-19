@@ -107,8 +107,12 @@ class _ProductEditPageState extends State<ProductEditPage> {
         return RaisedButton(
           child: Text("Save"),
           textColor: Colors.white,
-          onPressed: () => _submitForm(model.addProduct, model.updateProduct,
-              model.getProduct, model.getSelectedProductIndex()),
+          onPressed: () => _submitForm(
+                model.addProduct,
+                model.updateProduct,
+                model.selectedProduct,
+                model.selectedProductIndex,
+              ),
         );
       },
     );
@@ -148,13 +152,13 @@ class _ProductEditPageState extends State<ProductEditPage> {
   Widget build(BuildContext context) {
     return ScopedModelDescendant<MainModel>(
         builder: (BuildContext context, Widget child, MainModel model) {
-      return model.getSelectedProductIndex() == null
-          ? _buildPageContent(context, model.getProduct())
+      return model.selectedProductIndex == null
+          ? _buildPageContent(context, model.selectProduct)
           : Scaffold(
               appBar: AppBar(
                 title: Text('Edit Product'),
               ),
-              body: _buildPageContent(context, model.getProduct()),
+              body: _buildPageContent(context, model.selectProduct),
             );
     });
   }

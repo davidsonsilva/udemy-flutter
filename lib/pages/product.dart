@@ -48,18 +48,18 @@ class ProductPage extends StatelessWidget {
         builder: (BuildContext context, Widget child, MainModel model) {
           return Scaffold(
             appBar: AppBar(
-              title: Text(model.products[productIndex].title),
+              title: Text(model.allProducts[productIndex].title),
             ),
             body: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Image.asset(model.products[productIndex].image),
+                Image.asset(model.allProducts[productIndex].image),
                 Container(
                     padding: EdgeInsets.all(10.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        TitleDefault(model.products[productIndex].title),
+                        TitleDefault(model.allProducts[productIndex].title),
                       ],
                     )),
                 Container(
@@ -74,7 +74,7 @@ class ProductPage extends StatelessWidget {
                             border: Border.all(color: Colors.grey, width: 1.0),
                             borderRadius: BorderRadius.circular(5.0)),
                         child: Text(
-                          model.products[productIndex].description,
+                          model.allProducts[productIndex].description,
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 22.0),
                         ),
@@ -95,7 +95,7 @@ class ProductPage extends StatelessWidget {
                           border: Border.all(color: Colors.grey, width: 1.0),
                         ),
                         child: Text(
-                          '\$${model.products[productIndex].price}',
+                          '\$${model.allProducts[productIndex].price}',
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 20.0,

@@ -78,7 +78,6 @@ class _AuthPageState extends State<AuthPage> {
       return;
     }
     _loginFormKey.currentState.save();
-    //TODO: Incluir o Módulo de Usuário
     login(_formData['email'], _formData['password']);
     Navigator.pushReplacementNamed(context, '/products');
   }
