@@ -93,12 +93,13 @@ class _ProductEditPageState extends State<ProductEditPage> {
     if (selectProductIndex == null) {
       addProduct(_formData['title'], _formData['description'],
               _formData['image'], _formData['price'])
-          .then((_) =>
-        Navigator.pushReplacementNamed(context, '/products')
-            .then((_) => setSelectedProduct(null)));
+          .then((_) => Navigator.pushReplacementNamed(context, '/products')
+              .then((_) => setSelectedProduct(null)));
     } else {
       updateProduct(_formData['title'], _formData['description'],
-          _formData['image'], _formData['price']);
+          _formData['image'], _formData['price'])
+          .then((_) => Navigator.pushReplacementNamed(context, '/products')
+              .then((_) => setSelectedProduct(null)));
     }
   }
 
