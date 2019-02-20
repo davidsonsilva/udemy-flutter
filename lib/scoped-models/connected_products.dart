@@ -12,7 +12,7 @@ mixin ConnectedProductsModel on Model {
   User _authenticatedUser;
   bool _isLoading = false;
 
-  Future<Null> addProduct(
+  Future<bool> addProduct(
       String title, String description, String image, double price) {
     _isLoading = true;
     notifyListeners();
@@ -31,6 +31,11 @@ mixin ConnectedProductsModel on Model {
         .post('https://flutter-products-21b9c.firebaseio.com/products.json',
             body: json.encode(productsData))
         .then((http.Response response) {
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        _isLoading = false;
+        notifyListeners();
+        return false;
+      }
       final Map<String, dynamic> responseData = json.decode(response.body);
       final Product newProduct = Product(
           id: responseData['name'],
@@ -43,6 +48,7 @@ mixin ConnectedProductsModel on Model {
       _products.add(newProduct);
       _isLoading = false;
       notifyListeners();
+      return true;
     });
   }
 }
@@ -160,6 +166,7 @@ mixin ProductsModel on ConnectedProductsModel {
       _products = products;
       _isLoading = false;
       notifyListeners();
+      _selProductId = null;
     });
   }
 
