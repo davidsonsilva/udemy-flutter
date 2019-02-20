@@ -55,7 +55,17 @@ class _ProductListPageState extends State<ProductListPage> {
                   model.deleteProduct();
                 }
               },
-              background: Container(color: Colors.red),
+              background: Container(
+                alignment: AlignmentDirectional.centerEnd,
+                color: Colors.red,
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(0.0, 0.0, 10.0, 0.0),
+                  child: Icon(
+                    Icons.delete,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
               child: Column(
                 children: <Widget>[
                   ListTile(

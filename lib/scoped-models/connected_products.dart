@@ -94,8 +94,6 @@ mixin ProductsModel on ConnectedProductsModel {
             'https://flutter-products-21b9c.firebaseio.com/products/${selectedProduct.id}.json',
             body: json.encode(updateData))
         .then((http.Response response) {
-      _isLoading = false;
-      notifyListeners();
       final Product updatedProduct = Product(
           id: selectedProduct.id,
           title: title,
@@ -105,13 +103,24 @@ mixin ProductsModel on ConnectedProductsModel {
           userEmail: selectedProduct.userEmail,
           userId: selectedProduct.userId);
       _products[selectedProductIndex] = updatedProduct;
+      _isLoading = false;
       notifyListeners();
     });
   }
 
   void deleteProduct() {
+    _isLoading =true;
+    final String productId = selectedProduct.id;
     _products.removeAt(selectedProductIndex);
+    _selProductIndex = null; 
     notifyListeners();
+    http
+        .delete(
+            'https://flutter-products-21b9c.firebaseio.com/products/${productId}.json')
+        .then((http.Response response) {
+      _isLoading = false;
+      notifyListeners();
+    });
   }
 
   void fetchProducts() {
