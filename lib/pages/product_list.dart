@@ -6,7 +6,6 @@ import './product_edit.dart';
 import '../scoped-models/main.dart';
 
 class ProductListPage extends StatefulWidget {
-
   final MainModel model;
   ProductListPage(this.model);
 
