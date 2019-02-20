@@ -13,31 +13,31 @@ mixin ConnectedProductsModel on Model {
 
   void addProduct(
       String title, String description, String image, double price) {
-      final Map<String, dynamic> productsData = {
-        'title': title,
-         'description' : description,
-         'image' : 'http://pratocheio.org.br/wp-content/uploads/2015/03/Chocolate.jpg',
-         'price' : price,
-         'userEmail': _authenticatedUser.email,
-         'userId': _authenticatedUser.id
-      };
-      http.post('https://flutter-products-21b9c.firebaseio.com/products.json', body: json.encode(productsData))
-      .then((http.Response response) {
-        final Map<String , dynamic> responseData =json.decode(response.body);
-          final Product newProduct = Product(
-        id: responseData['name'],
-        title: title,
-        description: description,
-        image: image,
-        price: price,
-        userEmail: _authenticatedUser.email,
-        userId: _authenticatedUser.id);
-    _products.add(newProduct);
-    notifyListeners();
-      });
-      
-
-    
+    final Map<String, dynamic> productsData = {
+      'title': title,
+      'description': description,
+      'image':
+          'http://pratocheio.org.br/wp-content/uploads/2015/03/Chocolate.jpg',
+      'price': price,
+      'userEmail': _authenticatedUser.email,
+      'userId': _authenticatedUser.id
+    };
+    http
+        .post('https://flutter-products-21b9c.firebaseio.com/products.json',
+            body: json.encode(productsData))
+        .then((http.Response response) {
+      final Map<String, dynamic> responseData = json.decode(response.body);
+      final Product newProduct = Product(
+          id: responseData['name'],
+          title: title,
+          description: description,
+          image: image,
+          price: price,
+          userEmail: _authenticatedUser.email,
+          userId: _authenticatedUser.id);
+      _products.add(newProduct);
+      notifyListeners();
+    });
   }
 }
 
@@ -88,6 +88,28 @@ mixin ProductsModel on ConnectedProductsModel {
     notifyListeners();
   }
 
+  void fetchProducts() {
+    http
+        .get('https://flutter-products-21b9c.firebaseio.com/products.json')
+        .then((http.Response response) {
+      final Map<String, dynamic> productsData = json.decode(response.body);
+      final List<Product> products = [];
+      productsData.forEach((String productId, dynamic productsData) {
+        final Product productValue = Product(
+            id: productId,
+            title: productsData['title'],
+            description: productsData['description'],
+            image: productsData['image'],
+            price: productsData['price'],
+            userEmail: productsData['userEmail'],
+            userId: productsData['userId']);
+        products.add(productValue);
+        _products = products;
+        notifyListeners();
+      });
+    });
+  }
+
   void toggleProductFavoriteStatus() {
     final bool isCurrentlyFavorite = selectedProduct.isFavorite;
     final bool newFavoriteStatus = !isCurrentlyFavorite;
@@ -117,7 +139,8 @@ mixin ProductsModel on ConnectedProductsModel {
 }
 
 mixin UserModel on ConnectedProductsModel {
-    void login(String email, String password) {
-    _authenticatedUser = User(id: 'fdalsdfasf', email: email, password: password);
+  void login(String email, String password) {
+    _authenticatedUser =
+        User(id: 'fdalsdfasf', email: email, password: password);
   }
 }

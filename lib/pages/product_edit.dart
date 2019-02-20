@@ -15,8 +15,8 @@ class _ProductEditPageState extends State<ProductEditPage> {
   final Map<String, dynamic> _formData = {
     'title': null,
     'description': null,
-    'price': null,
     'image': 'assets/food.jpg',
+    'price': null,
   };
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
   final FocusNode _titleFocusNode = new FocusNode();

@@ -7,7 +7,23 @@ import '../scoped-models/main.dart';
 
 //import './products_admin.dart';
 
-class ProductsPage extends StatelessWidget {
+class ProductsPage extends StatefulWidget {
+  final MainModel model;
+
+  ProductsPage(this.model);
+
+  @override
+  State<StatefulWidget> createState() {
+    return _ProductsPageState();
+  }
+}
+
+class _ProductsPageState extends State<ProductsPage> {
+  @override
+  initState() {
+    super.initState();
+  }
+
   Widget _buildSideDrawer(BuildContext context) {
     return Drawer(
       child: Column(
@@ -26,6 +42,11 @@ class ProductsPage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget _buildProductsList() {
+    widget.model.fetchProducts();
+    return Products();
   }
 
   @override
@@ -49,7 +70,7 @@ class ProductsPage extends StatelessWidget {
           )
         ],
       ),
-      body: Products(),
+      body: _buildProductsList(),
     );
   }
 }
