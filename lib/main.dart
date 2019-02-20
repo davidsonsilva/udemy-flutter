@@ -48,9 +48,10 @@ class _MyAppState extends State<MyApp> {
           return null;
         }
         if (pathElements[1] == 'product') {
-          final int index = int.parse(pathElements[2]);
+          final String producId = pathElements[2];
+          model.selectProduct(producId);
           return MaterialPageRoute<bool>(
-            builder: (BuildContext context) => ProductPage(index),
+            builder: (BuildContext context) => ProductPage(),
           );
         }
         return null;

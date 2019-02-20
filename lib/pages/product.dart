@@ -4,12 +4,9 @@ import 'dart:async';
 import 'package:flutter_course/widgets/ui_elements/title_default.dart';
 
 import '../scoped-models/main.dart';
+import '../models/product.dart';
 
 class ProductPage extends StatelessWidget {
-  final int productIndex;
-
-  ProductPage(this.productIndex);
-
   _showAlertDialog(BuildContext context) {
     showDialog(
         context: context,
@@ -46,20 +43,26 @@ class ProductPage extends StatelessWidget {
       },
       child: ScopedModelDescendant<MainModel>(
         builder: (BuildContext context, Widget child, MainModel model) {
+          final Product product = model.selectedProduct;
           return Scaffold(
             appBar: AppBar(
-              title: Text(model.allProducts[productIndex].title),
+              title: Text(product.title),
             ),
             body: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Image.network(model.allProducts[productIndex].image),
+                FadeInImage(
+                  image: NetworkImage(product.image),
+                  height: 300.0,
+                  fit: BoxFit.cover,
+                  placeholder: AssetImage('assets/food.jpg'),
+                ),
                 Container(
                     padding: EdgeInsets.all(10.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        TitleDefault(model.allProducts[productIndex].title),
+                        TitleDefault(product.title),
                       ],
                     )),
                 Container(
@@ -74,7 +77,7 @@ class ProductPage extends StatelessWidget {
                             border: Border.all(color: Colors.grey, width: 1.0),
                             borderRadius: BorderRadius.circular(5.0)),
                         child: Text(
-                          model.allProducts[productIndex].description,
+                          product.description,
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 22.0),
                         ),
@@ -95,7 +98,7 @@ class ProductPage extends StatelessWidget {
                           border: Border.all(color: Colors.grey, width: 1.0),
                         ),
                         child: Text(
-                          '\$${model.allProducts[productIndex].price}',
+                          '\$${product.price}',
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 20.0,
