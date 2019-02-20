@@ -10,19 +10,24 @@ mixin ConnectedProductsModel on Model {
   List<Product> _products = [];
   int _selProductIndex;
   User _authenticatedUser;
+  bool _isLoading = false;
 
-  void addProduct(
+  Future<Null> addProduct(
       String title, String description, String image, double price) {
+    _isLoading = true;
+    notifyListeners();
     final Map<String, dynamic> productsData = {
       'title': title,
       'description': description,
       'image':
           'http://pratocheio.org.br/wp-content/uploads/2015/03/Chocolate.jpg',
       'price': price,
-      'userEmail': _authenticatedUser.email,
-      'userId': _authenticatedUser.id
+      'userEmail': _authenticatedUser == null
+          ? 'teste@gmail.com'
+          : _authenticatedUser.email,
+      'userId': _authenticatedUser == null ? '123456' : _authenticatedUser.id
     };
-    http
+    return http
         .post('https://flutter-products-21b9c.firebaseio.com/products.json',
             body: json.encode(productsData))
         .then((http.Response response) {
@@ -33,9 +38,10 @@ mixin ConnectedProductsModel on Model {
           description: description,
           image: image,
           price: price,
-          userEmail: _authenticatedUser.email,
-          userId: _authenticatedUser.id);
+          userEmail: responseData['email'],
+          userId: responseData['id']);
       _products.add(newProduct);
+      _isLoading = false;
       notifyListeners();
     });
   }
@@ -89,11 +95,20 @@ mixin ProductsModel on ConnectedProductsModel {
   }
 
   void fetchProducts() {
+    _isLoading = true;
+    notifyListeners();
     http
         .get('https://flutter-products-21b9c.firebaseio.com/products.json')
         .then((http.Response response) {
       final Map<String, dynamic> productsData = json.decode(response.body);
       final List<Product> products = [];
+
+      if (productsData == null) {
+        _isLoading = false;
+        notifyListeners();
+        return;
+      }
+
       productsData.forEach((String productId, dynamic productsData) {
         final Product productValue = Product(
             id: productId,
@@ -104,9 +119,10 @@ mixin ProductsModel on ConnectedProductsModel {
             userEmail: productsData['userEmail'],
             userId: productsData['userId']);
         products.add(productValue);
-        _products = products;
-        notifyListeners();
       });
+      _products = products;
+      _isLoading = false;
+      notifyListeners();
     });
   }
 
@@ -142,5 +158,11 @@ mixin UserModel on ConnectedProductsModel {
   void login(String email, String password) {
     _authenticatedUser =
         User(id: 'fdalsdfasf', email: email, password: password);
+  }
+}
+
+mixin UtilityModel on ConnectedProductsModel {
+  bool get isLoading {
+    return _isLoading;
   }
 }
