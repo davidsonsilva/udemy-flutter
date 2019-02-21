@@ -26,6 +26,9 @@ dependencies:
   #Http
   http: ^0.12.0+1
 
+  #sharedPreferences
+  shared_preferences: ^0.4.2
+
 
 dev_dependencies:
   flutter_test:
