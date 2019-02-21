@@ -5,6 +5,7 @@ import 'dart:convert';
 
 import '../models/product.dart';
 import '../models/user.dart';
+import '../models/auth.dart';
 
 mixin ConnectedProductsModel on Model {
   List<Product> _products = [];
@@ -220,32 +221,53 @@ mixin ProductsModel on ConnectedProductsModel {
 }
 
 mixin UserModel on ConnectedProductsModel {
-  void login(String email, String password) {
-    _authenticatedUser =
-        User(id: 'fdalsdfasf', email: email, password: password);
-  }
-
-  Future<Map<String, dynamic>> signup(String email, String password) async {
+  Future<Map<String, dynamic>> authenticate(String email, String password,
+      [AuthMode authMode = AuthMode.Login]) async {
     final Map<String, dynamic> authData = {
       'email': email,
       'password': password,
       'returnSecureToken': true
     };
-    final http.Response response = await http.post(
-        'https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyCjzl0yDfAYe0iR_5Ep7LD4lcAkRwrGEH8',
-        body: json.encode(authData),
-        headers: {'Content-Type': 'application/json'});
+
+    http.Response response;
+
+    if (authMode == AuthMode.Login) {
+      response = await http.post(
+          'https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=AIzaSyCjzl0yDfAYe0iR_5Ep7LD4lcAkRwrGEH8',
+          body: json.encode(authData),
+          headers: {'Content-Type': 'application/json'});
+    } else {
+      response = await http.post(
+          'https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyCjzl0yDfAYe0iR_5Ep7LD4lcAkRwrGEH8',
+          body: json.encode(authData),
+          headers: {'Content-Type': 'application/json'});
+    }
 
     final Map<String, dynamic> responseData = json.decode(response.body);
-    bool hasError =true;
+    bool hasError = true;
     String message = 'Something went wrong.';
-    if(responseData.containsKey('idToken')) {
-      message = 'Authentication succeede!';
+
+    if (responseData.containsKey('idToken')) {
+      message = 'Login succeede!';
       hasError = false;
-    } else if (responseData['error']['message'] == 'EMAIL_EXISTS'){
-      message = 'This email already exists.'  ;
+    } else if (responseData['error']['message'] == 'EMAIL_EXISTS') {
+      message = 'This email already exists.';
+    } else if (responseData['error']['message'] == 'EMAIL_NOT_FOUND') {
+      message =
+          'There is no user record corresponding to this identifier. The user may have been deleted.';
+    } else if (responseData['error']['message'] == 'INVALID_PASSWORD') {
+      message = 'The password is invalid or the user does not have a password.';
+    } else if (responseData['error']['message'] == 'USER_DISABLED') {
+      message = 'The user account has been disabled by an administrator.';
     }
-    return {'success': !hasError, 'message': message};
+
+    return {
+      'success': !hasError,
+      'idToken': responseData['idToken'],
+      'message': message
+    };
+    /* _authenticatedUser =
+        User(id: 'fdalsdfasf', email: email, password: password); */
   }
 }
 
