@@ -3,6 +3,8 @@ import 'package:scoped_model/scoped_model.dart';
 
 import '../scoped-models/main.dart';
 
+enum AuthMode { Signup, Login }
+
 class AuthPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -18,6 +20,9 @@ class _AuthPageState extends State<AuthPage> {
   };
 
   final GlobalKey<FormState> _loginFormKey = new GlobalKey<FormState>();
+  final TextEditingController _passwordController = new TextEditingController();
+  AuthMode _authMode = AuthMode.Login;
+
   DecorationImage _buildBackgroundImage() {
     return DecorationImage(
       fit: BoxFit.cover,
@@ -49,6 +54,7 @@ class _AuthPageState extends State<AuthPage> {
     return TextFormField(
       decoration: InputDecoration(
           labelText: 'Password', filled: true, fillColor: Colors.white),
+      controller: _passwordController,
       obscureText: true,
       validator: (String value) {
         if (value.isEmpty || value.length < 6) {
@@ -59,6 +65,20 @@ class _AuthPageState extends State<AuthPage> {
         _formData['password'] = value;
       },
     );
+  }
+
+  Widget _buildPasswordConfirmTextField() {
+    return TextFormField(
+        decoration: InputDecoration(
+            labelText: 'Confirm Password',
+            filled: true,
+            fillColor: Colors.white),
+        obscureText: true,
+        validator: (String value) {
+          if (_passwordController.text != value) {
+            return 'Password do not match.';
+          }
+        });
   }
 
   Widget _buildSwitchListTile() {
@@ -105,7 +125,27 @@ class _AuthPageState extends State<AuthPage> {
                     _buildEmailTextField(),
                     SizedBox(height: 10.0),
                     _buildPasswordTextField(),
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    _authMode == AuthMode.Signup
+                        ? _buildPasswordConfirmTextField()
+                        : Container(),
                     _buildSwitchListTile(),
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    FlatButton(
+                      child: Text(
+                          'Switch to ${_authMode == AuthMode.Login ? 'Signup' : 'Login'}'),
+                      onPressed: () {
+                        setState(() {
+                          _authMode = _authMode == AuthMode.Login
+                              ? AuthMode.Signup
+                              : AuthMode.Login;
+                        });
+                      },
+                    ),
                     SizedBox(
                       height: 10.0,
                     ),
