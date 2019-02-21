@@ -69,7 +69,7 @@ mixin ProductsModel on ConnectedProductsModel {
 
     try {
       final http.Response response = await http.post(
-          'https://flutter-products-21b9c.firebaseio.com/products.json',
+          'https://flutter-products-21b9c.firebaseio.com/products.json?auth=${_authenticatedUser.token}',
           body: json.encode(productsData));
 
       if (response.statusCode != 200 && response.statusCode != 201) {
@@ -112,7 +112,7 @@ mixin ProductsModel on ConnectedProductsModel {
     };
     return http
         .put(
-            'https://flutter-products-21b9c.firebaseio.com/products/${selectedProduct.id}.json',
+            'https://flutter-products-21b9c.firebaseio.com/products/${selectedProduct.id}.json?auth=${_authenticatedUser.token}',
             body: json.encode(updateData))
         .then((http.Response response) {
       final Product updatedProduct = Product(
@@ -142,7 +142,7 @@ mixin ProductsModel on ConnectedProductsModel {
     notifyListeners();
     return http
         .delete(
-            'https://flutter-products-21b9c.firebaseio.com/products/${productId}.json')
+            'https://flutter-products-21b9c.firebaseio.com/products/${productId}.json?auth=${_authenticatedUser.token}')
         .then((http.Response response) {
       _isLoading = false;
       notifyListeners();
@@ -158,7 +158,7 @@ mixin ProductsModel on ConnectedProductsModel {
     _isLoading = true;
     notifyListeners();
     return http
-        .get('https://flutter-products-21b9c.firebaseio.com/products.json')
+        .get('https://flutter-products-21b9c.firebaseio.com/products.json?auth=${_authenticatedUser.token}')
         .then<Null>((http.Response response) {
       final Map<String, dynamic> productsData = json.decode(response.body);
       final List<Product> products = [];
@@ -249,6 +249,10 @@ mixin UserModel on ConnectedProductsModel {
 
     if (responseData.containsKey('idToken')) {
       message = 'Login succeede!';
+      _authenticatedUser = User(
+          id: responseData['localId'],
+          email: responseData['email'],
+          token: responseData['idToken']);
       hasError = false;
     } else if (responseData['error']['message'] == 'EMAIL_EXISTS') {
       message = 'This email already exists.';
@@ -265,9 +269,7 @@ mixin UserModel on ConnectedProductsModel {
       'success': !hasError,
       'idToken': responseData['idToken'],
       'message': message
-    };
-    /* _authenticatedUser =
-        User(id: 'fdalsdfasf', email: email, password: password); */
+    };    
   }
 }
 
