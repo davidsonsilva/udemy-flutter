@@ -93,13 +93,35 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 
-  void _submitForm(Function login) {
+  void _submitForm(Function login, Function signup) async {
     if (!_loginFormKey.currentState.validate()) {
       return;
     }
     _loginFormKey.currentState.save();
-    login(_formData['email'], _formData['password']);
-    Navigator.pushReplacementNamed(context, '/products');
+    if (_authMode == AuthMode.Login) {
+      login(_formData['email'], _formData['password']);
+    } else {
+      final Map<String, dynamic> successInformation =
+          await signup(_formData['email'], _formData['password']);
+      if (successInformation['success']) {
+        Navigator.pushReplacementNamed(context, '/products');
+      } else {
+        showDialog(context: context, builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('An Error Occurred!'),
+            content: Text(successInformation['message']),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        });
+      }
+    }
   }
 
   @override
@@ -154,7 +176,7 @@ class _AuthPageState extends State<AuthPage> {
                       return RaisedButton(
                         textColor: Colors.white,
                         child: Text("LOGIN"),
-                        onPressed: () => _submitForm(model.login),
+                        onPressed: () => _submitForm(model.login, model.signup),
                       );
                     }),
                   ],
