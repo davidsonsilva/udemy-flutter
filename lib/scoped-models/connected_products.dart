@@ -13,7 +13,7 @@ mixin ConnectedProductsModel on Model {
   bool _isLoading = false;
 
   Future<bool> addProduct(
-      String title, String description, String image, double price) {
+      String title, String description, String image, double price) async {
     _isLoading = true;
     notifyListeners();
     final Map<String, dynamic> productsData = {
@@ -27,10 +27,12 @@ mixin ConnectedProductsModel on Model {
           : _authenticatedUser.email,
       'userId': _authenticatedUser == null ? '123456' : _authenticatedUser.id
     };
-    return http
-        .post('https://flutter-products-21b9c.firebaseio.com/products.json',
-            body: json.encode(productsData))
-        .then((http.Response response) {
+
+    try {
+      final http.Response response = await http.post(
+          'https://flutter-products-21b9c.firebaseio.com/products.json',
+          body: json.encode(productsData));
+
       if (response.statusCode != 200 && response.statusCode != 201) {
         _isLoading = false;
         notifyListeners();
@@ -49,11 +51,16 @@ mixin ConnectedProductsModel on Model {
       _isLoading = false;
       notifyListeners();
       return true;
-    }).catchError((error) {
+    } catch (error) {
       _isLoading = false;
       notifyListeners();
       return false;
-    });
+    }
+    /* ).catchError((error) {
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    } */
   }
 }
 
@@ -163,7 +170,7 @@ mixin ProductsModel on ConnectedProductsModel {
       if (productsData == null) {
         _isLoading = false;
         notifyListeners();
-        return ;
+        return;
       }
 
       productsData.forEach((String productId, dynamic productsData) {
@@ -184,7 +191,7 @@ mixin ProductsModel on ConnectedProductsModel {
     }).catchError((error) {
       _isLoading = false;
       notifyListeners();
-      return ;
+      return;
     });
   }
 
