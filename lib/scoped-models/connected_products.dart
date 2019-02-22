@@ -2,6 +2,7 @@ import 'package:scoped_model/scoped_model.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/product.dart';
 import '../models/user.dart';
@@ -158,7 +159,8 @@ mixin ProductsModel on ConnectedProductsModel {
     _isLoading = true;
     notifyListeners();
     return http
-        .get('https://flutter-products-21b9c.firebaseio.com/products.json?auth=${_authenticatedUser.token}')
+        .get(
+            'https://flutter-products-21b9c.firebaseio.com/products.json?auth=${_authenticatedUser.token}')
         .then<Null>((http.Response response) {
       final Map<String, dynamic> productsData = json.decode(response.body);
       final List<Product> products = [];
@@ -221,6 +223,10 @@ mixin ProductsModel on ConnectedProductsModel {
 }
 
 mixin UserModel on ConnectedProductsModel {
+  User get authenticateUser {
+    return _authenticatedUser;
+  }
+
   Future<Map<String, dynamic>> authenticate(String email, String password,
       [AuthMode authMode = AuthMode.Login]) async {
     final Map<String, dynamic> authData = {
@@ -249,11 +255,16 @@ mixin UserModel on ConnectedProductsModel {
 
     if (responseData.containsKey('idToken')) {
       message = 'Login succeede!';
+      hasError = false;
       _authenticatedUser = User(
           id: responseData['localId'],
           email: responseData['email'],
           token: responseData['idToken']);
-      hasError = false;
+      //Storing the Token on the Device
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('token', responseData['idToken']);
+      prefs.setString('userEmail', responseData['email']);
+      prefs.setString('userId', responseData['localId']);
     } else if (responseData['error']['message'] == 'EMAIL_EXISTS') {
       message = 'This email already exists.';
     } else if (responseData['error']['message'] == 'EMAIL_NOT_FOUND') {
@@ -269,7 +280,17 @@ mixin UserModel on ConnectedProductsModel {
       'success': !hasError,
       'idToken': responseData['idToken'],
       'message': message
-    };    
+    };
+  }
+
+  void autoAuthenticate() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString('token');
+    final String userEmail = prefs.getString('userEmail');
+    final String userId = prefs.getString('userId');
+    if (token != null) {
+      _authenticatedUser = User(id: userId, email: userEmail, token: token);
+    }
   }
 }
 
