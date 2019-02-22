@@ -4,7 +4,6 @@ import 'package:scoped_model/scoped_model.dart';
 import '../scoped-models/main.dart';
 import '../models/auth.dart';
 
-
 class AuthPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -94,7 +93,7 @@ class _AuthPageState extends State<AuthPage> {
   }
 
   void _submitForm(Function authenticate) async {
-    if (!_loginFormKey.currentState.validate()) {
+    if (!_loginFormKey.currentState.validate() || !_formData['acceptTerms']) {
       return;
     }
 
@@ -106,7 +105,7 @@ class _AuthPageState extends State<AuthPage> {
 
     //Validação do Login
     if (successInformation['success']) {
-      Navigator.pushReplacementNamed(context, '/products');
+      //Navigator.pushReplacementNamed(context, '/');
     } else {
       showDialog(
         context: context,

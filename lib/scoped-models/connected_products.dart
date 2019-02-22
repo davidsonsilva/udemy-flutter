@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:rxdart/rxdart.dart';
 
 import '../models/product.dart';
 import '../models/user.dart';
@@ -62,10 +63,8 @@ mixin ProductsModel on ConnectedProductsModel {
       'image':
           'http://pratocheio.org.br/wp-content/uploads/2015/03/Chocolate.jpg',
       'price': price,
-      'userEmail': _authenticatedUser == null
-          ? 'teste@gmail.com'
-          : _authenticatedUser.email,
-      'userId': _authenticatedUser == null ? '123456' : _authenticatedUser.id
+      'userEmail': _authenticatedUser.email,
+      'userId': _authenticatedUser.id
     };
 
     try {
@@ -224,9 +223,14 @@ mixin ProductsModel on ConnectedProductsModel {
 
 mixin UserModel on ConnectedProductsModel {
   Timer _authTimer;
+  PublishSubject<bool> _userSubject = PublishSubject();
 
   User get authenticateUser {
     return _authenticatedUser;
+  }
+
+  PublishSubject<bool> get userSubject {
+    return _userSubject;
   }
 
   Future<Map<String, dynamic>> authenticate(String email, String password,
@@ -256,12 +260,13 @@ mixin UserModel on ConnectedProductsModel {
     String message = 'Something went wrong.';
 
     if (responseData.containsKey('idToken')) {
-      message = 'Login succeede!';
+      message = 'Authentication succeeded!';
       hasError = false;
       _authenticatedUser = User(
           id: responseData['localId'],
           email: responseData['email'],
           token: responseData['idToken']);
+      _userSubject.add(true);
       //SetTimeout
       final int expiresIn = int.parse(responseData['expiresIn']);
       setAuthTimeout(expiresIn);
@@ -286,11 +291,9 @@ mixin UserModel on ConnectedProductsModel {
       message = 'The user account has been disabled by an administrator.';
     }
 
-    return {
-      'success': !hasError,
-      'idToken': responseData['idToken'],
-      'message': message
-    };
+    _isLoading = false;
+    notifyListeners();
+    return {'success': !hasError, 'message': message};
   }
 
   void autoAuthenticate() async {
@@ -308,9 +311,10 @@ mixin UserModel on ConnectedProductsModel {
       final String userEmail = prefs.getString('userEmail');
       final String userId = prefs.getString('userId');
       final int tokenLifespan = parsedExpiryTime.difference(now).inSeconds;
-      setAuthTimeout(tokenLifespan);
-
       _authenticatedUser = User(id: userId, email: userEmail, token: token);
+      _userSubject.add(true);
+      setAuthTimeout(tokenLifespan);
+      notifyListeners();
     }
   }
 
@@ -318,6 +322,7 @@ mixin UserModel on ConnectedProductsModel {
     print('logout');
     _authenticatedUser = null;
     _authTimer.cancel();
+    _userSubject.add(false);
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('token');
     prefs.remove('userEmail');
@@ -325,7 +330,7 @@ mixin UserModel on ConnectedProductsModel {
   }
 
   void setAuthTimeout(int time) {
-    _authTimer = Timer(Duration(microseconds: time * 5), logout);
+    _authTimer = Timer(Duration(seconds: time), logout);
   }
 }
 

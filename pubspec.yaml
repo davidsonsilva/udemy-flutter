@@ -22,12 +22,12 @@ dependencies:
 
   #ScopeModule
   scoped_model: ^1.0.1
-
   #Http
   http: ^0.12.0+1
-
   #sharedPreferences
   shared_preferences: ^0.5.1+1
+  #rxDart
+  rxdart: ^0.21.0
 
 
 dev_dependencies:

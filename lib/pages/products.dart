@@ -22,7 +22,7 @@ class ProductsPage extends StatefulWidget {
 class _ProductsPageState extends State<ProductsPage> {
   @override
   initState() {
-    widget.model.fetchProducts();
+    widget.model.fetchProducts();   
     super.initState();
   }
 
