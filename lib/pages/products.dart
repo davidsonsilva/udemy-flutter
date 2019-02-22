@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 import '../widgets/products/products.dart';
+import '../widgets/ui_elements/logout_list_tile.dart';
 
 import '../scoped-models/main.dart';
 
@@ -39,7 +40,9 @@ class _ProductsPageState extends State<ProductsPage> {
             onTap: () {
               Navigator.pushReplacementNamed(context, '/admin');
             },
-          )
+          ),
+          Divider(),
+          LogoutListTile(),
         ],
       ),
     );
@@ -54,7 +57,10 @@ class _ProductsPageState extends State<ProductsPage> {
       } else if (model.isLoading) {
         content = Center(child: CircularProgressIndicator());
       }
-      return RefreshIndicator(onRefresh: model.fetchProducts, child: content,);
+      return RefreshIndicator(
+        onRefresh: model.fetchProducts,
+        child: content,
+      );
     });
   }
 

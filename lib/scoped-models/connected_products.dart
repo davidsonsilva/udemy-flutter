@@ -292,6 +292,14 @@ mixin UserModel on ConnectedProductsModel {
       _authenticatedUser = User(id: userId, email: userEmail, token: token);
     }
   }
+
+  void logout() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    _authenticatedUser =null;
+    prefs.remove('token');
+    prefs.remove('userEmail');
+    prefs.remove('userId');
+  }
 }
 
 mixin UtilityModel on ConnectedProductsModel {
