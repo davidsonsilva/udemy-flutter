@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
+import 'dart:convert';
 
 import '../helpers/ensure-visible.dart';
 
@@ -44,7 +45,14 @@ class _LocationInputState extends State<LocationInput> {
 
     final Uri uri = Uri.https('maps.googleapis.com', '/maps/api/geocode/json',
         {'address': address, 'key': 'AIzaSyDGcd1-eDr4GeXV6-ezujkKNxLe5Tw7B0E'});
-    http.Response response = await http.get(uri);
+    final http.Response response = await http.get(uri);
+    final decodedResponse = jsonDecode(response.body);
+    print(decodedResponse);
+    //final formattedAddress = decodedResponse['results'][0]['formatted_address'];
+
+    //location: {lat: -19.9461491, lng: -43.97163}
+
+    //print(formattedAddress);
   }
 
   Widget getStaticMap() {
