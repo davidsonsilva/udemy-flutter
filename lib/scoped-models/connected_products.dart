@@ -178,7 +178,11 @@ mixin ProductsModel on ConnectedProductsModel {
             image: productsData['image'],
             price: productsData['price'],
             userEmail: productsData['userEmail'],
-            userId: productsData['userId']);
+            userId: productsData['userId'],
+            isFavorite: productsData['wishListUsers'] == null
+                ? false
+                : (productsData['wishListUsers'] as Map<String, dynamic>)
+                    .containsKey(_authenticatedUser.id));
         products.add(productValue);
       });
       _products = products;
