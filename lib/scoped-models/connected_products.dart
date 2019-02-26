@@ -54,8 +54,8 @@ mixin ProductsModel on ConnectedProductsModel {
     });
   }
 
-  Future<bool> addProduct(
-      String title, String description, String image, double price, LocationData locData) async {
+  Future<bool> addProduct(String title, String description, String image,
+      double price, LocationData locData) async {
     _isLoading = true;
     notifyListeners();
     final Map<String, dynamic> productsData = {
@@ -66,9 +66,9 @@ mixin ProductsModel on ConnectedProductsModel {
       'price': price,
       'userEmail': _authenticatedUser.email,
       'userId': _authenticatedUser.id,
-      'latitude' :locData.latitude,
-      'longitude':locData.longitude,
-      'address':locData.address
+      'latitude': locData.latitude,
+      'longitude': locData.longitude,
+      'address': locData.address
     };
 
     try {
@@ -88,6 +88,7 @@ mixin ProductsModel on ConnectedProductsModel {
           description: description,
           image: image,
           price: price,
+          locationData: locData,
           userEmail: responseData['email'],
           userId: responseData['id']);
       _products.add(newProduct);
@@ -158,7 +159,7 @@ mixin ProductsModel on ConnectedProductsModel {
     });
   }
 
-  Future<Null> fetchProducts({onlyUsers : false}) {
+  Future<Null> fetchProducts({onlyUsers: false}) {
     _isLoading = true;
     notifyListeners();
     return http
@@ -181,6 +182,10 @@ mixin ProductsModel on ConnectedProductsModel {
             description: productsData['description'],
             image: productsData['image'],
             price: productsData['price'],
+            locationData: LocationData(
+                address: productsData['address'],
+                latitude: productsData['latitude'],
+                longitude: productsData['longitude']),
             userEmail: productsData['userEmail'],
             userId: productsData['userId'],
             isFavorite: productsData['wishListUsers'] == null
@@ -189,9 +194,11 @@ mixin ProductsModel on ConnectedProductsModel {
                     .containsKey(_authenticatedUser.id));
         products.add(productValue);
       });
-      _products = onlyUsers ? products.where((Product product){
-         return product.userId == _authenticatedUser.id; 
-      }).toList() : products;
+      _products = onlyUsers
+          ? products.where((Product product) {
+              return product.userId == _authenticatedUser.id;
+            }).toList()
+          : products;
       _isLoading = false;
       notifyListeners();
       _selProductId = null;

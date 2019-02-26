@@ -7,12 +7,13 @@ import 'dart:convert';
 
 import '../helpers/ensure-visible.dart';
 import '../../models/location_data.dart';
+import '../../models/product.dart';
 
 class LocationInput extends StatefulWidget {
-
   final Function setLocation;
+  final Product product;
 
-  LocationInput(this.setLocation);
+  LocationInput(this.setLocation, this.product);
 
   @override
   _LocationInputState createState() => _LocationInputState();
@@ -28,6 +29,11 @@ class _LocationInputState extends State<LocationInput> {
   @override
   void initState() {
     _addressInputFocusnode.addListener(_updateLocation);
+    if (widget.product != null) {
+      _locationData = widget.product.locationData;
+      _addressInputController.text = _locationData.address;
+    }
+
     super.initState();
   }
 
@@ -122,10 +128,10 @@ class _LocationInputState extends State<LocationInput> {
     setState(() {
       mapController = controller;
       _locationData = LocationData(
-        address: 'Time Square,New York',
-        latitude: 40.758896,
-        longitude: -73.985130);
-      widget.setLocation(_locationData);  
+          address: 'Time Square,New York',
+          latitude: 40.758896,
+          longitude: -73.985130);
+      widget.setLocation(_locationData);
     });
   }
 
@@ -140,7 +146,7 @@ class _LocationInputState extends State<LocationInput> {
               focusNode: _addressInputFocusnode,
               controller: _addressInputController,
               validator: (String value) {
-                if(_locationData == null || value.isEmpty) {
+                if (_locationData == null || value.isEmpty) {
                   return 'No valid location found!';
                 }
               },
