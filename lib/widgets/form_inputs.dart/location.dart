@@ -9,6 +9,11 @@ import '../helpers/ensure-visible.dart';
 import '../../models/location_data.dart';
 
 class LocationInput extends StatefulWidget {
+
+  final Function setLocation;
+
+  LocationInput(this.setLocation);
+
   @override
   _LocationInputState createState() => _LocationInputState();
 }
@@ -41,6 +46,7 @@ class _LocationInputState extends State<LocationInput> {
 
   void getUriForAddress(String address) async {
     if (address.isEmpty) {
+      widget.setLocation(null);
       return;
     }
 
@@ -56,10 +62,7 @@ class _LocationInputState extends State<LocationInput> {
         latitude: coords['lat'],
         longitude: coords['lng']);
 
-    setState(() {
-      _addressInputController.text = _locationData.address;
-    });
-
+    widget.setLocation(_locationData);
   }
 
   Widget getStaticMap() {
@@ -75,7 +78,7 @@ class _LocationInputState extends State<LocationInput> {
               child: GoogleMap(
                 initialCameraPosition: CameraPosition(
                   bearing: 270.0,
-                  target: LatLng(41.40338, 2.17403),
+                  target: LatLng(40.758896, -73.985130),
                   tilt: 30.0,
                   zoom: 10.0,
                 ),
@@ -97,13 +100,13 @@ class _LocationInputState extends State<LocationInput> {
                 : () {
                     //Add Marker on Map
                     mapController.addMarker(MarkerOptions(
-                      position: LatLng(41.40338, 2.17403),
+                      position: LatLng(40.758896, -73.985130),
                       draggable: false,
                     ));
                     mapController.animateCamera(CameraUpdate.newCameraPosition(
                       const CameraPosition(
                         bearing: 270.0,
-                        target: LatLng(41.40338, 2.17403),
+                        target: LatLng(40.758896, -73.985130),
                         tilt: 30.0,
                         zoom: 17.0,
                       ),
@@ -113,22 +116,16 @@ class _LocationInputState extends State<LocationInput> {
         ],
       ),
     );
-/*    final StaticMapProvider staticMapViewProvider =
-        StaticMapProvider('AIzaSyDGcd1-eDr4GeXV6-ezujkKNxLe5Tw7B0E');
-    final Uri staticMapUri = staticMapViewProvider.getStaticUriWithMarkers(
-        [Marker('position', 'Position', 41.40338, 2.17403)],
-        center: Location(41.40338, 2.17403),
-        width: 500,
-        height: 300,
-        maptype: StaticMapViewType.roadmap);
-    setState(() {
-      _staticMapUri = staticMapUri;
-    }); */
   }
 
   void _onMapCreated(GoogleMapController controller) {
     setState(() {
       mapController = controller;
+      _locationData = LocationData(
+        address: 'Time Square,New York',
+        latitude: 40.758896,
+        longitude: -73.985130);
+      widget.setLocation(_locationData);  
     });
   }
 

@@ -8,6 +8,7 @@ import 'package:rxdart/rxdart.dart';
 import '../models/product.dart';
 import '../models/user.dart';
 import '../models/auth.dart';
+import '../models/location_data.dart';
 
 mixin ConnectedProductsModel on Model {
   List<Product> _products = [];
@@ -54,7 +55,7 @@ mixin ProductsModel on ConnectedProductsModel {
   }
 
   Future<bool> addProduct(
-      String title, String description, String image, double price) async {
+      String title, String description, String image, double price, LocationData locData) async {
     _isLoading = true;
     notifyListeners();
     final Map<String, dynamic> productsData = {
@@ -64,7 +65,10 @@ mixin ProductsModel on ConnectedProductsModel {
           'http://pratocheio.org.br/wp-content/uploads/2015/03/Chocolate.jpg',
       'price': price,
       'userEmail': _authenticatedUser.email,
-      'userId': _authenticatedUser.id
+      'userId': _authenticatedUser.id,
+      'latitude' :locData.latitude,
+      'longitude':locData.longitude,
+      'address':locData.address
     };
 
     try {
