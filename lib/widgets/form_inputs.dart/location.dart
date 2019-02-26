@@ -39,9 +39,9 @@ class _LocationInputState extends State<LocationInput> {
     }
   }
 
-  Future<Widget> getUriForAddress(String address) async {
+  void getUriForAddress(String address) async {
     if (address.isEmpty) {
-      return Container();
+      return;
     }
 
     final Uri uri = Uri.https('maps.googleapis.com', '/maps/api/geocode/json',
@@ -60,57 +60,6 @@ class _LocationInputState extends State<LocationInput> {
       _addressInputController.text = _locationData.address;
     });
 
-    return Padding(
-      padding: EdgeInsets.all(15.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          Center(
-            child: SizedBox(
-              width: 500.0,
-              height: 300.0,
-              child: GoogleMap(
-                initialCameraPosition: CameraPosition(
-                  bearing: 270.0,
-                  target: LatLng(_locationData.latitude, _locationData.latitude),
-                  tilt: 30.0,
-                  zoom: 10.0,
-                ),
-                onMapCreated: _onMapCreated,
-                myLocationEnabled: true,
-                trackCameraPosition: true,
-                zoomGesturesEnabled: true,
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 10.0,
-          ),
-          RaisedButton(
-            child: Text('Go to address'),
-            textColor: Colors.white,
-            onPressed: mapController == null
-                ? null
-                : () {
-                    //Add Marker on Map
-                    mapController.addMarker(MarkerOptions(
-                      position:
-                          LatLng(_locationData.latitude, _locationData.latitude),
-                      draggable: false,
-                    ));
-                    /* mapController.animateCamera(CameraUpdate.newCameraPosition(
-                      const CameraPosition(
-                        bearing: 270.0,
-                        target: LatLng(41.40338, 2.17403),
-                        tilt: 30.0,
-                        zoom: 17.0,
-                      ),
-                    )); */
-                  },
-          ),
-        ],
-      ),
-    );
   }
 
   Widget getStaticMap() {
@@ -193,7 +142,11 @@ class _LocationInputState extends State<LocationInput> {
             child: TextFormField(
               focusNode: _addressInputFocusnode,
               controller: _addressInputController,
-              validator: (String value) {},
+              validator: (String value) {
+                if(_locationData == null || value.isEmpty) {
+                  return 'No valid location found!';
+                }
+              },
               decoration: InputDecoration(labelText: 'Address'),
             ),
           ),
