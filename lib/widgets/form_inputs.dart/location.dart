@@ -6,6 +6,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import '../helpers/ensure-visible.dart';
+import '../../models/location_data.dart';
 
 class LocationInput extends StatefulWidget {
   @override
@@ -14,7 +15,7 @@ class LocationInput extends StatefulWidget {
 
 class _LocationInputState extends State<LocationInput> {
   GoogleMapController mapController;
-  Uri _staticMapUri;
+  LocationData _locationData;
 
   final FocusNode _addressInputFocusnode = FocusNode();
   final TextEditingController _addressInputController = TextEditingController();
@@ -33,26 +34,83 @@ class _LocationInputState extends State<LocationInput> {
 
   void _updateLocation() {
     if (!_addressInputFocusnode.hasFocus) {
-      getUriForAddress(_addressInputController.text);
+      //getUriForAddress(_addressInputController.text);
       getStaticMap();
     }
   }
 
-  void getUriForAddress(String address) async {
+  Future<Widget> getUriForAddress(String address) async {
     if (address.isEmpty) {
-      return;
+      return Container();
     }
 
     final Uri uri = Uri.https('maps.googleapis.com', '/maps/api/geocode/json',
         {'address': address, 'key': 'AIzaSyDGcd1-eDr4GeXV6-ezujkKNxLe5Tw7B0E'});
     final http.Response response = await http.get(uri);
     final decodedResponse = jsonDecode(response.body);
-    print(decodedResponse);
-    //final formattedAddress = decodedResponse['results'][0]['formatted_address'];
+    final formattedAddress = decodedResponse['results'][0]['formatted_address'];
+    final coords = decodedResponse['results'][0]['geometry']['location'];
 
-    //location: {lat: -19.9461491, lng: -43.97163}
+    _locationData = LocationData(
+        address: formattedAddress,
+        latitude: coords['lat'],
+        longitude: coords['lng']);
 
-    //print(formattedAddress);
+    setState(() {
+      _addressInputController.text = _locationData.address;
+    });
+
+    return Padding(
+      padding: EdgeInsets.all(15.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          Center(
+            child: SizedBox(
+              width: 500.0,
+              height: 300.0,
+              child: GoogleMap(
+                initialCameraPosition: CameraPosition(
+                  bearing: 270.0,
+                  target: LatLng(_locationData.latitude, _locationData.latitude),
+                  tilt: 30.0,
+                  zoom: 10.0,
+                ),
+                onMapCreated: _onMapCreated,
+                myLocationEnabled: true,
+                trackCameraPosition: true,
+                zoomGesturesEnabled: true,
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 10.0,
+          ),
+          RaisedButton(
+            child: Text('Go to address'),
+            textColor: Colors.white,
+            onPressed: mapController == null
+                ? null
+                : () {
+                    //Add Marker on Map
+                    mapController.addMarker(MarkerOptions(
+                      position:
+                          LatLng(_locationData.latitude, _locationData.latitude),
+                      draggable: false,
+                    ));
+                    /* mapController.animateCamera(CameraUpdate.newCameraPosition(
+                      const CameraPosition(
+                        bearing: 270.0,
+                        target: LatLng(41.40338, 2.17403),
+                        tilt: 30.0,
+                        zoom: 17.0,
+                      ),
+                    )); */
+                  },
+          ),
+        ],
+      ),
+    );
   }
 
   Widget getStaticMap() {
@@ -68,7 +126,7 @@ class _LocationInputState extends State<LocationInput> {
               child: GoogleMap(
                 initialCameraPosition: CameraPosition(
                   bearing: 270.0,
-                  target: LatLng(51.5160895, -0.1294527),
+                  target: LatLng(41.40338, 2.17403),
                   tilt: 30.0,
                   zoom: 10.0,
                 ),
@@ -135,13 +193,14 @@ class _LocationInputState extends State<LocationInput> {
             child: TextFormField(
               focusNode: _addressInputFocusnode,
               controller: _addressInputController,
+              validator: (String value) {},
               decoration: InputDecoration(labelText: 'Address'),
             ),
           ),
           SizedBox(
             height: 10.0,
           ),
-          getStaticMap(),
+          _addressInputController.text.isEmpty ? Container() : getStaticMap(),
         ],
       ),
     );
