@@ -88,7 +88,7 @@ mixin ProductsModel on ConnectedProductsModel {
           description: description,
           image: image,
           price: price,
-          locationData: locData,
+          location: locData,
           userEmail: responseData['email'],
           userId: responseData['id']);
       _products.add(newProduct);
@@ -102,8 +102,8 @@ mixin ProductsModel on ConnectedProductsModel {
     }
   }
 
-  Future<bool> updateProduct(
-      String title, String description, String image, double price) {
+  Future<bool> updateProduct(String title, String description, String image,
+      double price, LocationData locData) {
     _isLoading = true;
     notifyListeners();
     final Map<String, dynamic> updateData = {
@@ -112,6 +112,9 @@ mixin ProductsModel on ConnectedProductsModel {
       'image':
           'http://pratocheio.org.br/wp-content/uploads/2015/03/Chocolate.jpg',
       'price': price,
+      'longitude':locData.longitude,
+      'latitude':locData.longitude,
+      'address':locData.address,
       'userEmail': selectedProduct.userEmail,
       'userId': selectedProduct.userId
     };
@@ -126,6 +129,7 @@ mixin ProductsModel on ConnectedProductsModel {
           description: description,
           image: image,
           price: price,
+          location: locData,
           userEmail: selectedProduct.userEmail,
           userId: selectedProduct.userId);
       _products[selectedProductIndex] = updatedProduct;
@@ -182,7 +186,7 @@ mixin ProductsModel on ConnectedProductsModel {
             description: productsData['description'],
             image: productsData['image'],
             price: productsData['price'],
-            locationData: LocationData(
+            location: LocationData(
                 address: productsData['address'],
                 latitude: productsData['latitude'],
                 longitude: productsData['longitude']),
@@ -219,6 +223,7 @@ mixin ProductsModel on ConnectedProductsModel {
         description: selectedProduct.description,
         price: selectedProduct.price,
         image: selectedProduct.image,
+        location: selectedProduct.location,
         userEmail: selectedProduct.userEmail,
         userId: selectedProduct.userId,
         isFavorite: newFavoriteStatus);
@@ -242,6 +247,7 @@ mixin ProductsModel on ConnectedProductsModel {
           description: selectedProduct.description,
           price: selectedProduct.price,
           image: selectedProduct.image,
+          location: selectedProduct.location,
           userEmail: selectedProduct.userEmail,
           userId: selectedProduct.userId,
           isFavorite: !newFavoriteStatus);

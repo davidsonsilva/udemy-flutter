@@ -30,6 +30,7 @@ dependencies:
   rxdart: ^0.21.0
   #map_view
   map_view: ^0.0.14
+  location: "1.4.1"
     
       
   #google_maps

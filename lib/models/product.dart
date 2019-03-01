@@ -9,7 +9,7 @@ class Product {
   final String image;
   final double price;
   final bool isFavorite;
-  final LocationData locationData;
+  final LocationData location;
 
   final String userEmail;
   final String userId;
@@ -22,6 +22,6 @@ class Product {
       @required this.price,
       @required this.userEmail,
       @required this.userId,
-      @required this.locationData,
+      @required this.location,
       this.isFavorite = false});
 }
