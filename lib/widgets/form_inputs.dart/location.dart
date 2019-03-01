@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:map_view/map_view.dart';
 
 import 'package:http/http.dart' as http;
 import 'dart:async';
@@ -19,9 +20,8 @@ class LocationInput extends StatefulWidget {
 }
 
 class _LocationInputState extends State<LocationInput> {
-  
   LocationData _locationData;
-
+  Uri _staticMapUri;
   final FocusNode _addressInputFocusnode = FocusNode();
   final TextEditingController _addressInputController = TextEditingController();
 
@@ -32,7 +32,6 @@ class _LocationInputState extends State<LocationInput> {
       _locationData = widget.product.locationData;
       _addressInputController.text = _locationData.address;
     }
-
     super.initState();
   }
 
@@ -70,17 +69,17 @@ class _LocationInputState extends State<LocationInput> {
     widget.setLocation(_locationData);
   }
 
-  Widget getStaticMap() {
-    return Container();
-  }
-
-  void _onMapCreated() {
+  void getStaticMap() {
+    final StaticMapProvider staticMapProvider =
+        StaticMapProvider('AIzaSyDGcd1-eDr4GeXV6-ezujkKNxLe5Tw7B0E');
+    final Uri staticMapUri = staticMapProvider.getStaticUriWithMarkers(
+        [Marker('position', 'Position', 41.40338, 2.17403)],
+        center: Location(41.40338, 2.17403),
+        width: 500,
+        height: 300,
+        maptype: StaticMapViewType.roadmap);
     setState(() {
-      _locationData = LocationData(
-          address: 'Time Square,New York',
-          latitude: 40.758896,
-          longitude: -73.985130);
-      widget.setLocation(_locationData);
+      _staticMapUri = staticMapUri;
     });
   }
 
@@ -105,7 +104,9 @@ class _LocationInputState extends State<LocationInput> {
           SizedBox(
             height: 10.0,
           ),
-          _addressInputController.text.isEmpty ? Container() : getStaticMap(),
+          _addressInputController.text.isEmpty
+              ? Container()
+              : Image.network(_staticMapUri.toString()),
         ],
       ),
     );
