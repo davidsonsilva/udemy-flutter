@@ -27,11 +27,7 @@ class _LocationInputState extends State<LocationInput> {
 
   @override
   void initState() {
-    _addressInputFocusnode.addListener(_updateLocation);
-    if (widget.product != null) {
-      _locationData = widget.product.locationData;
-      _addressInputController.text = _locationData.address;
-    }
+    _addressInputFocusnode.addListener(_updateLocation); 
     super.initState();
   }
 
@@ -43,8 +39,7 @@ class _LocationInputState extends State<LocationInput> {
 
   void _updateLocation() {
     if (!_addressInputFocusnode.hasFocus) {
-      //getUriForAddress(_addressInputController.text);
-      getStaticMap();
+      getStaticMap(_addressInputController.text);
     }
   }
 
@@ -69,16 +64,42 @@ class _LocationInputState extends State<LocationInput> {
     widget.setLocation(_locationData);
   }
 
-  void getStaticMap() {
+  void getStaticMap(String address) async {
+
+    if (address.isEmpty) {
+      widget.setLocation(null);
+      return;
+    }
+    /* Estou comentando pois não possuo limite de consulta na plataforma do google
+    final Uri uri = Uri.https('maps.googleapis.com', '/maps/api/geocode/json',
+        {'address': address, 'key': 'AIzaSyDGcd1-eDr4GeXV6-ezujkKNxLe5Tw7B0E'});
+    final http.Response response = await http.get(uri);
+    final decodedResponse = jsonDecode(response.body);
+    final formattedAddress = decodedResponse['results'][0]['formatted_address'];
+    //final coords = decodedResponse['results'][0]['geometry']['location']; */
+
+    final formattedAddress = 'R. Indiana, 1140 - Jardim America';
+    final coords = {'lat':-19.9461491, 'lng':-43.9738187};
+
+    
+
+    _locationData = LocationData(
+        address: formattedAddress,
+        latitude: coords['lat'],
+        longitude: coords['lng']);
+
+    widget.setLocation(_locationData);
+
     final StaticMapProvider staticMapProvider =
         StaticMapProvider('AIzaSyDGcd1-eDr4GeXV6-ezujkKNxLe5Tw7B0E');
     final Uri staticMapUri = staticMapProvider.getStaticUriWithMarkers(
-        [Marker('position', 'Position', 41.40338, 2.17403)],
-        center: Location(41.40338, 2.17403),
+        [Marker('position', 'Position', _locationData.latitude, _locationData.longitude)],
+        center: Location(_locationData.latitude, _locationData.longitude),
         width: 500,
         height: 300,
         maptype: StaticMapViewType.roadmap);
     setState(() {
+      _addressInputController.text = formattedAddress;
       _staticMapUri = staticMapUri;
     });
   }
