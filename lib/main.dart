@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:map_view/map_view.dart';
 //import 'package:flutter/rendering.dart';
 
 import './pages/auth.dart';
@@ -11,6 +12,7 @@ import './models/product.dart';
 
 void main() {
   //debugPaintSizeEnabled = true;
+  MapView.setApiKey('AIzaSyDGcd1-eDr4GeXV6-ezujkKNxLe5Tw7B0E');
   runApp(MyApp());
 }
 

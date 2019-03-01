@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
@@ -20,7 +19,7 @@ class LocationInput extends StatefulWidget {
 }
 
 class _LocationInputState extends State<LocationInput> {
-  GoogleMapController mapController;
+  
   LocationData _locationData;
 
   final FocusNode _addressInputFocusnode = FocusNode();
@@ -72,61 +71,11 @@ class _LocationInputState extends State<LocationInput> {
   }
 
   Widget getStaticMap() {
-    return Padding(
-      padding: EdgeInsets.all(15.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          Center(
-            child: SizedBox(
-              width: 500.0,
-              height: 300.0,
-              child: GoogleMap(
-                initialCameraPosition: CameraPosition(
-                  bearing: 270.0,
-                  target: LatLng(40.758896, -73.985130),
-                  tilt: 30.0,
-                  zoom: 10.0,
-                ),
-                onMapCreated: _onMapCreated,
-                myLocationEnabled: true,
-                trackCameraPosition: true,
-                zoomGesturesEnabled: true,
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 10.0,
-          ),
-          RaisedButton(
-            child: Text('Go to address'),
-            textColor: Colors.white,
-            onPressed: mapController == null
-                ? null
-                : () {
-                    //Add Marker on Map
-                    mapController.addMarker(MarkerOptions(
-                      position: LatLng(40.758896, -73.985130),
-                      draggable: false,
-                    ));
-                    mapController.animateCamera(CameraUpdate.newCameraPosition(
-                      const CameraPosition(
-                        bearing: 270.0,
-                        target: LatLng(40.758896, -73.985130),
-                        tilt: 30.0,
-                        zoom: 17.0,
-                      ),
-                    ));
-                  },
-          ),
-        ],
-      ),
-    );
+    return Container();
   }
 
-  void _onMapCreated(GoogleMapController controller) {
+  void _onMapCreated() {
     setState(() {
-      mapController = controller;
       _locationData = LocationData(
           address: 'Time Square,New York',
           latitude: 40.758896,
